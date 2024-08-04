@@ -356,6 +356,6 @@ Previous shape: torch.Size([224, 224, 3])
 New shape: torch.Size([3, 224, 224])
 ```
 
-## There are a lot of other features in PyTorch, but font care cause for one time use you can gpt it.
+## There are a lot of other features in PyTorch, but dont care cause for one time use you can gpt it.
 
 ### We are done.
