@@ -221,3 +221,141 @@ print(ten_zeros)
 ```python
 tensor([0, 0, 0, 0, 0, 0, 0, 0, 0, 0])
 ```
+
+### Tensor DataTypes
+Check this for more info [PyTorch] (https://pytorch.org/docs/stable/tensors.html#data-types)
+
+```python
+float_32_tensor = torch.tensor([3.0, 6.0, 9.0],
+                               dtype=None,
+                               device=None, 
+                               requires_grad=False)
+
+print(float_32_tensor.shape, float_32_tensor.dtype, float_32_tensor.device)
+```
+**Output:**
+```python
+torch.Size([3]) torch.float32 cpu
+```
+
+### Getting info from tensors  
+* `shape` - what shape is the tensor? (some operations require specific shape rules)
+* `dtype` - what datatype are the elements within the tensor stored in?
+* `device` - what device is the tensor stored on? (usually GPU or CPU)
+
+```python
+some_tensor = torch.rand(3, 4)
+
+# Find out details about it
+print(some_tensor)
+print(f"Shape of tensor: {some_tensor.shape}")
+print(f"Datatype of tensor: {some_tensor.dtype}")
+print(f"Device tensor is stored on: {some_tensor.device}")
+```
+**Output:**
+```python
+tensor([[0.0768, 0.1223, 0.2892, 0.7063],
+        [0.4531, 0.8558, 0.6990, 0.5572],
+        [0.4770, 0.5193, 0.3438, 0.5791]])
+Shape of tensor: torch.Size([3, 4])
+Datatype of tensor: torch.float32
+Device tensor is stored on: cpu
+```
+
+### Manipulating tensors (tensor operations)
+* Addition
+* Substraction
+* Multiplication (element-wise)
+* Division
+* Matrix multiplication
+
+### Matrix multiplication is ALL YOU NEED
+![Matrix multiplication!](Picture/00_matrix_multiplication_is_all_you_need.jpeg" How shapes are claculated")
+
+```python
+tensor_A = torch.tensor([[1, 2],
+                         [3, 4],
+                         [5, 6]], dtype=torch.float32)
+
+tensor_B = torch.tensor([[7, 10],
+                         [8, 11], 
+                         [9, 12]], dtype=torch.float32)
+print(torch.mm(tensor_A, tensor_B.T))
+```
+**Output:**
+```python
+tensor([[ 27.,  30.,  33.],
+        [ 61.,  68.,  75.],
+        [ 95., 106., 117.]])
+```
+Changing the datatype
+```python
+tensor = torch.arange(10., 100., 10.)
+print(tensor.dtype)
+tensor_float16 = tensor.type(torch.float16)
+print(tensor_float16)
+```
+**Output:**
+```python
+torch.float32
+tensor([10., 20., 30., 40., 50., 60., 70., 80., 90.], dtype=torch.float16)
+```
+
+### Reshape
+
+Reshaping a tensor
+```python
+x = torch.arange(1., 8.)
+print(x, x.shape)
+x_reshaped = x.reshape(1, 7)
+print(x_reshaped, x_reshaped.shape)
+```
+**Output:**
+```python
+tensor([1., 2., 3., 4., 5., 6., 7.]) torch.Size([7])
+tensor([[1., 2., 3., 4., 5., 6., 7.]]) torch.Size([1, 7])
+```
+
+### Stack
+
+Stack a tensor on top of each other
+```python
+x_stacked = torch.stack([x, x, x, x], dim=0) 
+print(x_stacked)
+```
+**Output:**
+```python
+tensor([[1., 2., 3., 4., 5., 6., 7.],
+        [1., 2., 3., 4., 5., 6., 7.],
+        [1., 2., 3., 4., 5., 6., 7.],
+        [1., 2., 3., 4., 5., 6., 7.]])
+```
+
+### Squeeze
+
+Remove single dimension from a tensor
+```python
+x_squeezed = x_reshaped.squeeze()
+print(f"\nNew tensor: {x_squeezed}")
+```
+**Output:**
+```python
+New tensor: tensor([1., 2., 3., 4., 5., 6., 7.])
+```
+Unsqueeze does the opposite
+Permute does the permutation
+```python
+x_original = torch.rand(size=(224, 224, 3))
+x_permuted = x_original.permute(2, 0, 1)
+print(f"Previous shape: {x_original.shape}")
+print(f"New shape: {x_permuted.shape}")
+```
+**Output:**
+```python
+Previous shape: torch.Size([224, 224, 3])
+New shape: torch.Size([3, 224, 224])
+```
+
+## There are a lot of other features in PyTorch, but font care cause for one time use you can gpt it.
+
+### We are done.
