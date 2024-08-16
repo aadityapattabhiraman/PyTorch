@@ -82,7 +82,7 @@ def test(dataloader, model, loss_fn):
 	with torch.no_grad():
 		for X, y in dataloader:
 			X, y = X.to(device), y.to(device)
-			pred = mmodel(X)
+			pred = model(X)
 			test_loss += loss_fn(pred, y).item()
 			correct += (pred.argmax(1) == y).type(torch.float).sum().item()
 
