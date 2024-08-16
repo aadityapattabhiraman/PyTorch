@@ -71,3 +71,33 @@ def train(dataloader, model, loss_fn, optimizer):
 		if batch % 100 == 0:
 			loss, current = loss.item(), (batch + 1) * len(X)
 			print(f"Loss: {loss:>7f} [{current:>5d}/{size:>5d}]")
+
+
+def test(dataloader, model, loss_fn):
+	size = len(dataloader.dataset)
+	num_batches = len(dataloader)
+
+	test_loss, correct = 0, 0
+	model.eval()
+	with torch.no_grad():
+		for X, y in dataloader:
+			X, y = X.to(device), y.to(device)
+			pred = mmodel(X)
+			test_loss += loss_fn(pred, y).item()
+			correct += (pred.argmax(1) == y).type(torch.float).sum().item()
+
+	test_loss /= num_batches 
+	correct /= size 
+	print(f"Test error:\nAccuracy: {(100 * correct):>0.1f}%,". 
+		"Avg loss: {test_loss:>8f} \n")
+
+
+epochs = 5
+for epoch in range(epochs):
+	print(f"Epoch {epoch + 1}\n------------------------------------")
+	train(train_dataloader, model, loss_fn, optimizer)
+	test(test_dataloader, model, loss_fn)
+print("Done!")
+
+torch.save(model.state_dict(), "model.pth")
+print("Saved pytorch model")
