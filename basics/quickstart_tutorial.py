@@ -103,7 +103,7 @@ torch.save(model.state_dict(), "model.pth")
 print("Saved pytorch model")
 
 model = NeuralNetwork().to(device)
-model.load_state_dict(torch.load("model.pth"))
+model.load_state_dict(torch.load("model.pth", weights_only=True))
 
 classes = [
 	"T-shirt/top",
