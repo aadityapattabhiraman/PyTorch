@@ -101,3 +101,28 @@ print("Done!")
 
 torch.save(model.state_dict(), "model.pth")
 print("Saved pytorch model")
+
+model = NeuralNetwork().to(device)
+model.load_state_dict(torch.load("model.pth"))
+
+classes = [
+	"T-shirt/top",
+	"Trouser",
+	"Pullover",
+	"Dress",
+	"Coat",
+	"Sandal",
+	"Shirt",
+	"Sneaker",
+	"Bag",
+	"Ankle boot",
+]
+
+model.eval()
+X, y = test_data[0][0], test_data[0][1]
+
+with torch.no_grad():
+	X = X.to(device)
+	pred = model(X)
+	predicted, actual = classes[pred[0].argmax(0)], classes[y]
+	print(f"Predicted: '{predicted}', Actual: '{actual}'")
