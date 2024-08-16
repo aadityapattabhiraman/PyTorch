@@ -78,7 +78,6 @@ for epoch in range(epochs):
     optimizer.step()
 
     model_0.eval()
-
     with torch.inference_mode():
         test_pred = model_0(x_test)
         test_loss = loss_fn(test_pred, y_test.type(torch.float))
