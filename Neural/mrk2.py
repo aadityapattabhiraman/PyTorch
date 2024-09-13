@@ -8,6 +8,7 @@ from torch.utils.data import DataLoader
 from torchvision import datasets
 from torchvision import transforms
 from tqdm import tqdm
+from time import time
 
 
 # Neural Network
@@ -15,29 +16,51 @@ class NN(nn.Module):
 	def __init__(self, input_size, num_classes):
 		super(NN, self).__init__()
 		self.fc1 = nn.Linear(input_size, 50)
-		self.relu = nn.ReLU()  # Add this line
+		self.relu = nn.ReLU()  
 		self.fc2 = nn.Linear(50, num_classes)
 
 	def forward(self, x):
 		return self.fc2(self.relu(self.fc1(x)))
 
 
-# model = NN(784, 10)
-# x = torch.randn(64, 784)
-# print(model(x).shape)
+# CNN
+class CNN(nn.Module):
+	def __init__(self, in_channels=1, num_classes=10):
+		super(CNN, self).__init__()
+		self.conv1 = nn.Conv2d(
+			in_channels=1, out_channels=8, kernel_size=(3, 3), stride=(1, 1), 
+			padding=(1,1)
+		)
+		self.pool = nn.MaxPool2d(
+			kernel_size=(2, 2), stride=(2, 2)
+		)
+		self.conv2 = nn.Conv2d(
+			in_channels=8, out_channels=16, kernel_size=(3, 3),stride=(1, 1),
+			padding=(1, 1)
+		)
+		self.fc1 = nn.Linear(16 * 7 * 7, num_classes)
+		self.relu = nn.ReLU()
 
+	def forward(self, x):
+		return self.fc1(self.pool(self.conv2(self.pool(self.conv1(x)))).reshape(x.shape[0], -1))
+
+
+# model = CNN()
+# x = torch.randn(64, 1, 28, 28)
+# print(model(x).shape)
+start = time()
 # Set Device
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 # Hyperparameters
-input_size = 784
+in_channels = 1
 num_classes = 10
 learning_rate = 0.001
 batch_size = 64
-num_epochs = 1
+num_epochs = 5
 
 # Load data
-pbar = tqdm(total=4, desc="Downloading MNIST")
+pbar = tqdm(total=2, desc="Downloading MNIST")
 train_dataset = datasets.MNIST(
 	root="data/", train=True, transform=transforms.ToTensor(), download=True
 	)
@@ -55,7 +78,7 @@ test_dataloader = DataLoader(
 	)
 
 # Initialize network
-model = NN(input_size=input_size, num_classes=num_classes).to(device)
+model = CNN().to(device)
 
 # Loss and optimizer
 criterion = nn.CrossEntropyLoss()
@@ -63,12 +86,9 @@ optimizer = optim.Adam(model.parameters(), lr=learning_rate)
 
 # Train Network
 for epoch in tqdm(range(num_epochs), desc="Epochs"):
-	for batch_idx, (data, targets) in enumerate(tqdm(train_dataloader, 
-		desc="Batches", leave=False)):
+	for batch_idx, (data, targets) in enumerate(tqdm(train_dataloader, desc="Batches", leave=False)):
 		data = data.to(device)
 		targets = targets.to(device)
-
-		data = data.reshape(data.shape[0], -1)
 
 		scores = model(data)
 		loss = criterion(scores, targets)
@@ -87,7 +107,6 @@ def check_accuracy(loader, model):
 		for x, y in loader:
 			x = x.to(device)
 			y = y.to(device)
-			x = x.reshape(x.shape[0], -1)
 
 			scores = model(x)
 			_, predictions = scores.max(1)
@@ -99,3 +118,5 @@ def check_accuracy(loader, model):
 
 check_accuracy(train_dataloader, model)
 check_accuracy(test_dataloader, model)
+end = time()
+print(end - start)
